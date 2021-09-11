@@ -1,1 +1,2 @@
 # doantkll
+Chào tụi mày.
