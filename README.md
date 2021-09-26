@@ -1,3 +1,3 @@
-# doantkll
-Chào tụi mày.
-1 2 3 
+# Đồ án Thiết Kế Luận Lý
+
+---
