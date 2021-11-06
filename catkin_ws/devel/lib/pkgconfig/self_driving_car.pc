@@ -1,0 +1,1 @@
+/home/nqt/catkin_ws/devel/.private/self_driving_car/lib/pkgconfig/self_driving_car.pc

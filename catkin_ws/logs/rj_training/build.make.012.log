@@ -1,0 +1,24 @@
+[  0%] Built target rosgraph_msgs_generate_messages_eus
+[  0%] Built target rosgraph_msgs_generate_messages_cpp
+[  0%] Built target roscpp_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target roscpp_generate_messages_eus
+[  0%] Built target roscpp_generate_messages_cpp
+[  0%] Built target roscpp_generate_messages_py
+[  0%] Built target rosgraph_msgs_generate_messages_py
+[  0%] Built target rosgraph_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target roscpp_generate_messages_lisp
+[  0%] Built target rosgraph_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target _rj_training_generate_messages_check_deps_StringWithHeader
+[ 18%] Built target listener_node
+[ 36%] Built target talker_node
+[ 45%] Built target rj_training_generate_messages_nodejs
+[ 54%] Built target rj_training_generate_messages_lisp
+[ 72%] Built target rj_training_generate_messages_py
+[ 81%] Built target rj_training_generate_messages_cpp
+[100%] Built target rj_training_generate_messages_eus
+[100%] Built target rj_training_generate_messages

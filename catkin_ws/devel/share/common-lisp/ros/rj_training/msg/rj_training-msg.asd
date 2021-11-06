@@ -1,0 +1,1 @@
+/home/nqt/catkin_ws/devel/.private/rj_training/share/common-lisp/ros/rj_training/msg/rj_training-msg.asd

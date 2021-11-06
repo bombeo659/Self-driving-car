@@ -1,0 +1,5 @@
+vehicle_sim/worlds/external/car_demo/prius_description
+/home/nqt/catkin_ws/devel/.private/prius_description/cmake.lock /home/nqt/catkin_ws/devel/./cmake.lock
+/home/nqt/catkin_ws/devel/.private/prius_description/lib/pkgconfig/prius_description.pc /home/nqt/catkin_ws/devel/lib/pkgconfig/prius_description.pc
+/home/nqt/catkin_ws/devel/.private/prius_description/share/prius_description/cmake/prius_descriptionConfig-version.cmake /home/nqt/catkin_ws/devel/share/prius_description/cmake/prius_descriptionConfig-version.cmake
+/home/nqt/catkin_ws/devel/.private/prius_description/share/prius_description/cmake/prius_descriptionConfig.cmake /home/nqt/catkin_ws/devel/share/prius_description/cmake/prius_descriptionConfig.cmake

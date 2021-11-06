@@ -1,0 +1,1 @@
+/home/nqt/catkin_ws/devel/.private/rj_training/lib/pkgconfig/rj_training.pc

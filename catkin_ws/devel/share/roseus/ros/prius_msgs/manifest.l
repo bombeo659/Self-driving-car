@@ -1,0 +1,1 @@
+/home/nqt/catkin_ws/devel/.private/prius_msgs/share/roseus/ros/prius_msgs/manifest.l

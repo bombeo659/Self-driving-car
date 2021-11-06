@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/nqt/catkin_ws/devel/.private/prius_description/setup.sh

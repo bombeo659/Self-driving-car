@@ -1,0 +1,3 @@
+Symlinking /home/nqt/catkin_ws/devel/lib/pkgconfig/imu_description.pc
+Symlinking /home/nqt/catkin_ws/devel/share/imu_description/cmake/imu_descriptionConfig-version.cmake
+Symlinking /home/nqt/catkin_ws/devel/share/imu_description/cmake/imu_descriptionConfig.cmake

@@ -1,0 +1,8 @@
+prefix=/home/nqt/catkin_ws/devel/.private/self_driving_car
+
+Name: self_driving_car
+Description: Description of self_driving_car
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

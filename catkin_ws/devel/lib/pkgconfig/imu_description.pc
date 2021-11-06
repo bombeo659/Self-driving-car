@@ -1,0 +1,1 @@
+/home/nqt/catkin_ws/devel/.private/imu_description/lib/pkgconfig/imu_description.pc

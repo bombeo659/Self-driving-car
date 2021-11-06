@@ -1,0 +1,1 @@
+/home/nqt/catkin_ws/devel/.private/camera_description/lib/pkgconfig/camera_description.pc

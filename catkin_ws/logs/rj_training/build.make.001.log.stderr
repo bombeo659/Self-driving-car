@@ -1,0 +1,71 @@
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:4:7:[m[K [01;31m[Kerror: [m[Kexpected nested-name-specifier before ‘[01m[Knamesapce[m[K’
+    4 | using [01;31m[Knamesapce[m[K ros;
+      |       [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:[m[K In function ‘[01m[Kint main(int, char**)[m[K’:
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:9:2:[m[K [01;31m[Kerror: [m[K‘[01m[Kinit[m[K’ was not declared in this scope; did you mean ‘[01m[Kros::init[m[K’?
+    9 |  [01;31m[Kinit[m[K(argc, argv, "talker");
+      |  [01;31m[K^~~~[m[K
+      |  [32m[Kros::init[m[K
+In file included from [01m[K/opt/ros/noetic/include/ros/node_handle.h:47[m[K,
+                 from [01m[K/opt/ros/noetic/include/ros/ros.h:45[m[K,
+                 from [01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:1[m[K:
+[01m[K/opt/ros/noetic/include/ros/init.h:103:18:[m[K [01;36m[Knote: [m[K‘[01m[Kros::init[m[K’ declared here
+  103 | ROSCPP_DECL void [01;36m[Kinit[m[K(const VP_string& remapping_args, const std::string& name, uint32_t options = 0);
+      |                  [01;36m[K^~~~[m[K
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:10:2:[m[K [01;31m[Kerror: [m[K‘[01m[KNodeHandle[m[K’ was not declared in this scope; did you mean ‘[01m[Kros::NodeHandle[m[K’?
+   10 |  [01;31m[KNodeHandle[m[K node_handle;
+      |  [01;31m[K^~~~~~~~~~[m[K
+      |  [32m[Kros::NodeHandle[m[K
+In file included from [01m[K/opt/ros/noetic/include/ros/ros.h:45[m[K,
+                 from [01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:1[m[K:
+[01m[K/opt/ros/noetic/include/ros/node_handle.h:87:21:[m[K [01;36m[Knote: [m[K‘[01m[Kros::NodeHandle[m[K’ declared here
+   87 |   class ROSCPP_DECL [01;36m[KNodeHandle[m[K
+      |                     [01;36m[K^~~~~~~~~~[m[K
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:11:2:[m[K [01;31m[Kerror: [m[K‘[01m[KPublisher[m[K’ was not declared in this scope; did you mean ‘[01m[Kros::Publisher[m[K’?
+   11 |  [01;31m[KPublisher[m[K publisher = node_handle.advertise<std_msgs::String>("talker_topic", 1);
+      |  [01;31m[K^~~~~~~~~[m[K
+      |  [32m[Kros::Publisher[m[K
+In file included from [01m[K/opt/ros/noetic/include/ros/node_handle.h:32[m[K,
+                 from [01m[K/opt/ros/noetic/include/ros/ros.h:45[m[K,
+                 from [01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:1[m[K:
+[01m[K/opt/ros/noetic/include/ros/publisher.h:48:21:[m[K [01;36m[Knote: [m[K‘[01m[Kros::Publisher[m[K’ declared here
+   48 |   class ROSCPP_DECL [01;36m[KPublisher[m[K
+      |                     [01;36m[K^~~~~~~~~[m[K
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:14:2:[m[K [01;31m[Kerror: [m[K‘[01m[KRate[m[K’ was not declared in this scope; did you mean ‘[01m[Kros::Rate[m[K’?
+   14 |  [01;31m[KRate[m[K rate(10); //Hz
+      |  [01;31m[K^~~~[m[K
+      |  [32m[Kros::Rate[m[K
+In file included from [01m[K/opt/ros/noetic/include/ros/ros.h:39[m[K,
+                 from [01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:1[m[K:
+[01m[K/opt/ros/noetic/include/ros/rate.h:51:20:[m[K [01;36m[Knote: [m[K‘[01m[Kros::Rate[m[K’ declared here
+   51 | class ROSTIME_DECL [01;36m[KRate[m[K
+      |                    [01;36m[K^~~~[m[K
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:15:8:[m[K [01;31m[Kerror: [m[K‘[01m[Kok[m[K’ was not declared in this scope; did you mean ‘[01m[Kros::ok[m[K’?
+   15 |  while([01;31m[Kok[m[K())
+      |        [01;31m[K^~[m[K
+      |        [32m[Kros::ok[m[K
+In file included from [01m[K/opt/ros/noetic/include/ros/node_handle.h:47[m[K,
+                 from [01m[K/opt/ros/noetic/include/ros/ros.h:45[m[K,
+                 from [01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:1[m[K:
+[01m[K/opt/ros/noetic/include/ros/init.h:160:18:[m[K [01;36m[Knote: [m[K‘[01m[Kros::ok[m[K’ declared here
+  160 | ROSCPP_DECL bool [01;36m[Kok[m[K();
+      |                  [01;36m[K^~[m[K
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:19:3:[m[K [01;31m[Kerror: [m[K‘[01m[Kpublisher[m[K’ was not declared in this scope
+   19 |   [01;31m[Kpublisher[m[K.publish(msg);
+      |   [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:20:3:[m[K [01;31m[Kerror: [m[K‘[01m[KspinOnce[m[K’ was not declared in this scope; did you mean ‘[01m[Kros::spinOnce[m[K’?
+   20 |   [01;31m[KspinOnce[m[K(); // update
+      |   [01;31m[K^~~~~~~~[m[K
+      |   [32m[Kros::spinOnce[m[K
+In file included from [01m[K/opt/ros/noetic/include/ros/node_handle.h:47[m[K,
+                 from [01m[K/opt/ros/noetic/include/ros/ros.h:45[m[K,
+                 from [01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:1[m[K:
+[01m[K/opt/ros/noetic/include/ros/init.h:147:18:[m[K [01;36m[Knote: [m[K‘[01m[Kros::spinOnce[m[K’ declared here
+  147 | ROSCPP_DECL void [01;36m[KspinOnce[m[K();
+      |                  [01;36m[K^~~~~~~~[m[K
+[01m[K/home/nqt/catkin_ws/src/rj_training/src/talker.cpp:21:3:[m[K [01;31m[Kerror: [m[K‘[01m[Krate[m[K’ was not declared in this scope
+   21 |   [01;31m[Krate[m[K.sleep();
+      |   [01;31m[K^~~~[m[K
+make[2]: *** [CMakeFiles/talker_node.dir/build.make:63: CMakeFiles/talker_node.dir/src/talker.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:425: CMakeFiles/talker_node.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2
