@@ -1,0 +1,33 @@
+{
+    "model" : {
+        "backend":                      "ENET",
+        "im_width":                     320,
+        "im_height":                    240,
+        "out_width":                    320,
+        "out_height":                   240,
+        "classes":                      4
+    },
+
+    "train": {
+        "train_images":                 "./data/train/images",
+        "train_annotations":            "./data/train/masks",
+        "val_images":                   "./data/val/images",
+        "val_annotations":              "./data/val/masks",
+        "train_batch_size":             24,
+        "val_batch_size":               24,
+        "learning_rate":                1e-3,
+        "nb_epochs":                    120,
+        "debug":                        true,
+        "save_model_name" :             "ENET.h5",
+        "load_pretrained_weights":      false,
+        "pretrained_weights_path":      "ENET.h5",
+        "logs_dir" :                    "logs_ENet"
+    },
+
+    "test": {
+        "model_file" :                 "ENET.001.h5",
+        "test_images":                 "./data/test/images",
+        "test_annotations":            "./data/test/masks",
+        "test_batch_size": 1
+    }
+}
