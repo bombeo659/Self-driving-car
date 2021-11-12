@@ -1,2 +1,0 @@
-vehicle_sim/vehicle/sensor_model/velodyne/velodyne_simulator
-/home/nqt/catkin_ws/devel/.private/velodyne_simulator/cmake.lock /home/nqt/catkin_ws/devel/./cmake.lock

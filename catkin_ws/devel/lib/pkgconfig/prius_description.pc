@@ -1,1 +1,0 @@
-/home/nqt/catkin_ws/devel/.private/prius_description/lib/pkgconfig/prius_description.pc

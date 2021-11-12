@@ -1,5 +1,0 @@
-[31m[1mCMake Error[0m at /home/nqt/catkin_ws/src/rj_training/CMakeLists.txt:16 (generate_message):
-  Unknown CMake command "generate_message".
-
-
-make: *** [Makefile:618: cmake_check_build_system] Error 1

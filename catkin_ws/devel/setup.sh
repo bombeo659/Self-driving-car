@@ -1,1 +1,1 @@
-/home/nqt/catkin_ws/devel/.private/catkin_tools_prebuild/setup.sh
+/home/nqt/Self-driving-car/catkin_ws/devel/.private/catkin_tools_prebuild/setup.sh

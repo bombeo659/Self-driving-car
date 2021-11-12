@@ -1,1 +1,1 @@
-/home/nqt/catkin_ws/devel/.private/self_driving_car/share/self_driving_car/cmake/self_driving_carConfig-version.cmake
+/home/nqt/Self-driving-car/catkin_ws/devel/.private/self_driving_car/share/self_driving_car/cmake/self_driving_carConfig-version.cmake

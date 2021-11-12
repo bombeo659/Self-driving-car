@@ -1,1 +1,0 @@
-/home/nqt/catkin_ws/devel/.private/imu_description/share/imu_description/cmake/imu_descriptionConfig-version.cmake

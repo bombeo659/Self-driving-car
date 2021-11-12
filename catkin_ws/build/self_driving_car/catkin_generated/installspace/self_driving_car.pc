@@ -1,4 +1,4 @@
-prefix=/home/nqt/catkin_ws/install
+prefix=/home/nqt/Self-driving-car/catkin_ws/install
 
 Name: self_driving_car
 Description: Description of self_driving_car

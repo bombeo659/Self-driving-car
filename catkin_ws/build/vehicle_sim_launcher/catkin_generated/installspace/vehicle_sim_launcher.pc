@@ -1,8 +1,0 @@
-prefix=/home/nqt/catkin_ws/install
-
-Name: vehicle_sim_launcher
-Description: Description of vehicle_sim_launcher
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: urdf_tutorial controller_manager robot_state_publisher joint_state_controller

@@ -1,1 +1,0 @@
-/home/nqt/catkin_ws/devel/.private/rj_training/share/roseus/ros/rj_training/manifest.l

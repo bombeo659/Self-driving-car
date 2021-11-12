@@ -1,6 +1,6 @@
-devel_space: /home/nqt/catkin_ws/devel
+devel_space: /home/nqt/Self-driving-car/catkin_ws/devel
 install: false
-install_space: /home/nqt/catkin_ws/install
+install_space: /home/nqt/Self-driving-car/catkin_ws/install
 profile: default
-source_space: /home/nqt/catkin_ws/src
-workspace: /home/nqt/catkin_ws
+source_space: /home/nqt/Self-driving-car/catkin_ws/src
+workspace: /home/nqt/Self-driving-car/catkin_ws

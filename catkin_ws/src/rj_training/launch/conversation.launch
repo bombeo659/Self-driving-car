@@ -1,9 +1,0 @@
-<launch>
-
-	<rosparam command="load" file="$(find rj_training)/config/talker.yaml" />
-	
-	<node name="talker" pkg="rj_training" type="talker_node"/>
-
-	<node name="listener" pkg="rj_training" type="listener_node" output="screen"/>
-	
-</launch>

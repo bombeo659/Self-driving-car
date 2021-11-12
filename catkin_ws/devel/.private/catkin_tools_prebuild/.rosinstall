@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/nqt/catkin_ws/devel/.private/catkin_tools_prebuild/setup.sh
+    local-name: /home/nqt/Self-driving-car/catkin_ws/devel/.private/catkin_tools_prebuild/setup.sh

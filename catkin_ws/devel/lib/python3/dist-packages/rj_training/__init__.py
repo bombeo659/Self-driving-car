@@ -1,1 +1,0 @@
-/home/nqt/catkin_ws/devel/.private/rj_training/lib/python3/dist-packages/rj_training/__init__.py

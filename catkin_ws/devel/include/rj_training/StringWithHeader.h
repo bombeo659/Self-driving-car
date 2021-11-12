@@ -1,1 +1,0 @@
-/home/nqt/catkin_ws/devel/.private/rj_training/include/rj_training/StringWithHeader.h

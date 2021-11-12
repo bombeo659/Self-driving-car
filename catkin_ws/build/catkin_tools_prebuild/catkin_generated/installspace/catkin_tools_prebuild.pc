@@ -1,4 +1,4 @@
-prefix=/home/nqt/catkin_ws/install
+prefix=/home/nqt/Self-driving-car/catkin_ws/install
 
 Name: catkin_tools_prebuild
 Description: Description of catkin_tools_prebuild

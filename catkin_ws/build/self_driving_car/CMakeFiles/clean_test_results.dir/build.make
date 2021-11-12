@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nqt/catkin_ws/src/self_driving_car
+CMAKE_SOURCE_DIR = /home/nqt/Self-driving-car/catkin_ws/src/self_driving_car
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nqt/catkin_ws/build/self_driving_car
+CMAKE_BINARY_DIR = /home/nqt/Self-driving-car/catkin_ws/build/self_driving_car
 
 # Utility rule file for clean_test_results.
 
@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/nqt/catkin_ws/build/self_driving_car
 include CMakeFiles/clean_test_results.dir/progress.make
 
 CMakeFiles/clean_test_results:
-	/usr/bin/python3 /opt/ros/noetic/share/catkin/cmake/test/remove_test_results.py /home/nqt/catkin_ws/build/self_driving_car/test_results
+	/usr/bin/python3 /opt/ros/noetic/share/catkin/cmake/test/remove_test_results.py /home/nqt/Self-driving-car/catkin_ws/build/self_driving_car/test_results
 
 clean_test_results: CMakeFiles/clean_test_results
 clean_test_results: CMakeFiles/clean_test_results.dir/build.make
@@ -71,6 +71,6 @@ CMakeFiles/clean_test_results.dir/clean:
 .PHONY : CMakeFiles/clean_test_results.dir/clean
 
 CMakeFiles/clean_test_results.dir/depend:
-	cd /home/nqt/catkin_ws/build/self_driving_car && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nqt/catkin_ws/src/self_driving_car /home/nqt/catkin_ws/src/self_driving_car /home/nqt/catkin_ws/build/self_driving_car /home/nqt/catkin_ws/build/self_driving_car /home/nqt/catkin_ws/build/self_driving_car/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/nqt/Self-driving-car/catkin_ws/build/self_driving_car && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nqt/Self-driving-car/catkin_ws/src/self_driving_car /home/nqt/Self-driving-car/catkin_ws/src/self_driving_car /home/nqt/Self-driving-car/catkin_ws/build/self_driving_car /home/nqt/Self-driving-car/catkin_ws/build/self_driving_car /home/nqt/Self-driving-car/catkin_ws/build/self_driving_car/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/clean_test_results.dir/depend
 
