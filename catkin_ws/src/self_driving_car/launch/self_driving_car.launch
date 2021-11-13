@@ -1,0 +1,7 @@
+<launch>
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find self_driving_car)/worlds/self_driving_car.world"/>
+  </include>
+  
+</launch>
