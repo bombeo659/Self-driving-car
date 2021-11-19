@@ -1,1 +1,0 @@
-/home/nqt/Self-driving-car/catkin_ws/devel/./cmake.lock 2

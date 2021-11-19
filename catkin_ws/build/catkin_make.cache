@@ -1,2 +1,0 @@
-rj_training:self_driving_car:vehicle_sim/launcher/vehicle_sim_launcher:vehicle_sim/vehicle/sensor_model/camera/camera_description:vehicle_sim/vehicle/sensor_model/imu/imu_description:vehicle_sim/vehicle/vehicle_model:vehicle_sim/vehicle/vehicle_sim_interface:vehicle_sim/worlds/gazebo_world_description
--DCATKIN_DEVEL_PREFIX=/home/hung/Desktop/Self-driving-car/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/hung/Desktop/Self-driving-car/catkin_ws/install -G Unix Makefiles
