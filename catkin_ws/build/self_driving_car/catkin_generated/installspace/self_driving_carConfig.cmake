@@ -67,14 +67,14 @@ set(self_driving_car_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(self_driving_car_SOURCE_PREFIX /home/nqt/Self-driving-car/catkin_ws/src/self_driving_car)
-  set(self_driving_car_DEVEL_PREFIX /home/nqt/Self-driving-car/catkin_ws/devel/.private/self_driving_car)
+  set(self_driving_car_SOURCE_PREFIX /home/hung/Desktop/Self-driving-car/catkin_ws/src/self_driving_car)
+  set(self_driving_car_DEVEL_PREFIX /home/hung/Desktop/Self-driving-car/catkin_ws/devel)
   set(self_driving_car_INSTALL_PREFIX "")
   set(self_driving_car_PREFIX ${self_driving_car_DEVEL_PREFIX})
 else()
   set(self_driving_car_SOURCE_PREFIX "")
   set(self_driving_car_DEVEL_PREFIX "")
-  set(self_driving_car_INSTALL_PREFIX /home/nqt/Self-driving-car/catkin_ws/install)
+  set(self_driving_car_INSTALL_PREFIX /home/hung/Desktop/Self-driving-car/catkin_ws/install)
   set(self_driving_car_PREFIX ${self_driving_car_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/nqt/Self-driving-car/catkin_ws/install/lib;/home/nqt/Self-driving-car/catkin_ws/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/hung/Desktop/Self-driving-car/catkin_ws/install/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -211,7 +211,7 @@ foreach(depend ${depends})
   _unpack_libraries_with_build_configuration(self_driving_car_LIBRARIES ${self_driving_car_LIBRARIES})
 
   _list_append_unique(self_driving_car_LIBRARY_DIRS ${${self_driving_car_dep}_LIBRARY_DIRS})
-  _list_append_deduplicate(self_driving_car_EXPORTED_TARGETS ${${self_driving_car_dep}_EXPORTED_TARGETS})
+  list(APPEND self_driving_car_EXPORTED_TARGETS ${${self_driving_car_dep}_EXPORTED_TARGETS})
 endforeach()
 
 set(pkg_cfg_extras "")

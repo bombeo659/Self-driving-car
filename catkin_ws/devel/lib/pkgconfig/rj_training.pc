@@ -1,0 +1,8 @@
+prefix=/home/hung/Desktop/Self-driving-car/catkin_ws/devel
+
+Name: rj_training
+Description: Description of rj_training
+Version: 0.0.0
+Cflags: -I/home/hung/Desktop/Self-driving-car/catkin_ws/devel/include
+Libs: -L${prefix}/lib 
+Requires: message_runtime
