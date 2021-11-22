@@ -1,0 +1,14 @@
+material course
+{
+  receive_shadows off
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture course.png
+      }
+    }
+  }
+}

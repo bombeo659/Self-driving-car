@@ -1,0 +1,41 @@
+<?xml version="1.0"?> 
+<sdf version="1.4">
+  <world name="default">
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <model name="ground">
+      <pose>1 2.3 -.1 0 0 0</pose>
+      <static>1</static>
+      <link name="ground">
+        <collision name="ground_coll">
+          <geometry>
+            <box>
+              <size>150 150 .1</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name="ground_vis">
+          <geometry>
+            <box>
+              <size>150 150 .1</size>
+            </box>
+          </geometry>
+
+          <material>
+            <script>
+              <uri>file://course.material</uri>
+              <name>course</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+	
+
+  </world>
+</sdf>
