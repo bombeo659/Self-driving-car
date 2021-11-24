@@ -8,7 +8,7 @@
   <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model) gpu:=$(arg gpu)" />
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" default="$(find self-driving-car)/worlds/my_world.world"/> 
+    <arg name="world_name" default="$(find self-driving-car)/worlds/final.world"/> 
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>

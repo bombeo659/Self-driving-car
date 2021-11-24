@@ -3,8 +3,6 @@
 	<xacro:include filename="$(find self-driving-car)/urdf/body.xacro" />
 	<xacro:include filename="$(find self-driving-car)/urdf/wheel.xacro" />
 	<xacro:include filename="$(find self-driving-car)/urdf/steering.xacro" />
-	<xacro:include filename="$(find velodyne_description)/urdf/HDL-32E.urdf.xacro"/>
-	<xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
 	<xacro:include filename="$(find self-driving-car)/urdf/monocular_camera.xacro"/>
 	<xacro:include filename="$(find self-driving-car)/urdf/imu.xacro"/>
 
@@ -59,10 +57,7 @@
 
   <!-- ================ sensor ================ -->
 	<xacro:property name="calibration" value="${load_yaml('$(find self-driving-car)/config/calibration.yaml')}"/>
-  <HDL-32E parent="base_link" name="velodyne" topic="/points_raw" hz="10" samples="220" gpu="$(arg gpu)">
-    <origin xyz="${calibration['base_link2velodyne']['x']} ${calibration['base_link2velodyne']['y']} ${calibration['base_link2velodyne']['z']}" 
-            rpy="${calibration['base_link2velodyne']['roll']} ${calibration['base_link2velodyne']['pitch']} ${calibration['base_link2velodyne']['yaw']}" />
-  </HDL-32E>
+  
 
   <xacro:monocular_camera_macro suffix="camera" parent="base_link" namespace="" 
                                 x="${calibration['base_link2camera']['x']}"

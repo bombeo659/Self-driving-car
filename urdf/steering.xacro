@@ -21,9 +21,10 @@
         </geometry>
         <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
         <gazebo reference="${suffix}_link">
-  		<material>Gazebo/Black</material>
+  		<material value="Gazebo/Black"/>
 	</gazebo>
       </visual>
+      
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <mass value="${mass}"/>
@@ -31,12 +32,13 @@
                  iyy="${mass*radius*radius/2}" iyz="0" 
                  izz="${radius*radius*mass/4+length*length*mass/12}" />
       </inertial>
-      <!-- <collision>
+      
+     <collision>
         <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
         <geometry>
           <cylinder radius="0.1" length="0.01" />
         </geometry>
-      </collision> -->
+      </collision>
     </link>
   </xacro:macro>  
 
@@ -58,7 +60,7 @@
         </geometry>
         <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
         <gazebo reference="${suffix}_link">
-  		<material>Gazebo/Black</material>
+  		<material value="Gazebo/Black"/>
 	</gazebo>
       </visual>
       <inertial>

@@ -15,20 +15,17 @@
                  iyy="${(vehicle_length*vehicle_length+vehicle_mass_height*vehicle_mass_height)*vehicle_mass/12.0}" iyz="0.0" 
                  izz="${(vehicle_width*vehicle_width+vehicle_length*vehicle_length)*vehicle_mass/12.0}"/>
       </inertial>
+      
       <visual>
-        <!-- <origin xyz="${wheel_base/2} 0 ${vehicle_height/2}" rpy="0 0 0"/>
-        <geometry>
-          <box size="${vehicle_length} 0.9 ${vehicle_height}"/>
-        </geometry> -->
-        <!-- <origin xyz="${wheel_base/2} 0 ${vehicle_height/2}" rpy="0 ${-pi/2} ${pi/2}"/> -->
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+       <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://self-driving-car/mesh/body.dae" scale="${wheel_base/2.85} 1 1"/>
         </geometry>
         <gazebo reference="${suffix}_link">
-  		<material>Gazebo/Black</material>
+  		<material value="Gazebo/Black"/>
 	</gazebo>
       </visual>
+      
       <collision>
         <origin xyz="${wheel_base/2} 0 ${vehicle_height/2}" rpy="0 0 0"/>
         <geometry>
