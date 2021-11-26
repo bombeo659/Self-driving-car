@@ -1,12 +1,26 @@
-# Đồ án Thiết Kế Luận Lý
+# Logic Design Project
 
+## Before using package:
+- Ros Noetic
+- effor-controllers
+- velocity-controllers
+- OpenCv 4.2.0
 
----
 ## To start simulation world
+
+
+create workspace
+mkdir -p catkin_ws/src
+cd catkin_ws
+catkin_make
+
+cd src
+git clone 
+
 
 ```bash
 catkin_make
 source devel/setup.bash
-roslaunch self_driving_car self_driving_car.launch
+roslaunch self-driving-car world-test.launch
 ```
-![Screenshot from 2021-11-19 14-33-51](https://user-images.githubusercontent.com/86301240/142583653-d15ffcc5-4a26-47b4-aded-1088f51210cb.png)
+

@@ -56,6 +56,10 @@ add_executable(vehicle_info_publisher src/vehicle_info_publisher.cpp)
 add_dependencies(vehicle_info_publisher ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(vehicle_info_publisher ${catkin_LIBRARIES})
 
+catkin_install_python(PROGRAMS src/auto_control.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 install(TARGETS vehicle_input_subscriber vehicle_info_publisher
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

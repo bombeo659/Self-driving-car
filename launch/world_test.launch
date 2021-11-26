@@ -8,7 +8,7 @@
   <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model) gpu:=$(arg gpu)" />
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" default="$(find self-driving-car)/worlds/final.world"/> 
+    <arg name="world_name" default="$(find self-driving-car)/worlds/map.world"/> 
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -68,6 +68,13 @@
     <node name="vehicle_info_publisher" 
 	pkg="self-driving-car" 
 	type="vehicle_info_publisher" 
+	respawn="false"
+        output="screen">
+    </node>
+    
+    <node name="auto_control" 
+	pkg="self-driving-car" 
+	type="auto_control.py" 
 	respawn="false"
         output="screen">
     </node>
