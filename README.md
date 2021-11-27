@@ -34,8 +34,8 @@ rosrun self-driving-car auto_control.py
 
 #### Training and testing traffic signs
 
-![stop](https://github.com/bombeo659/Self-driving-car/blob/main/image/iamge2.png)
+![turn](https://github.com/bombeo659/Self-driving-car/blob/main/image/iamge2.png)
 
-![turn](hhttps://github.com/bombeo659/Self-driving-car/blob/main/image/iamge1.png)
+![stop](https://github.com/bombeo659/Self-driving-car/blob/main/image/image1.png)
 
-![graph](hhttps://github.com/bombeo659/Self-driving-car/blob/main/image/rosgraph.png)
+![graph](https://github.com/bombeo659/Self-driving-car/blob/main/image/rosgraph.png)
