@@ -32,7 +32,7 @@ rosrun self-driving-car auto_control.py
 ```
 
 
-#### Training and testing traffic signs
+## Training and testing traffic signs
 
 ![turn](https://github.com/bombeo659/Self-driving-car/blob/main/image/iamge2.png)
 
