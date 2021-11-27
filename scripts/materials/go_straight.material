@@ -13,7 +13,7 @@ material go_straight/material
 
       texture_unit
       {
-        texture go_straight.jpg
+        texture go_straight.png
       }
     }
   }

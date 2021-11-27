@@ -30,6 +30,13 @@
 	pkg="rqt_robot_steering" 
 	type="rqt_robot_steering" 
 	/>
+	
+  <!--node name="auto_control" 
+	pkg="self-driving-car" 
+	type="auto_control.py" 
+	respawn="false"
+    output="screen">
+  </node-->
 
   <group ns="$(arg ns)">
     <!-- Load joint controller configurations from YAML file to parameter server -->
@@ -71,13 +78,5 @@
 	respawn="false"
         output="screen">
     </node>
-    
-    <node name="auto_control" 
-	pkg="self-driving-car" 
-	type="auto_control.py" 
-	respawn="false"
-        output="screen">
-    </node>
-
   </group>
 </launch>

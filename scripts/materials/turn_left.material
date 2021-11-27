@@ -13,7 +13,7 @@ material turn_left/material
 
       texture_unit
       {
-        texture turn_left.jpg
+        texture turn_left.png
       }
     }
   }
