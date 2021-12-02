@@ -14,6 +14,10 @@ cv_bridge = CvBridge()
 image_global = None
 image_global_mutex = Lock()
 rate = 0
+range_image = 0
+perios_range_image = 0
+count = 0
+flag = 0 #0: no info 1: stop 2: left 3: right
 
 model_path = "/home/nqt/catkin_ws/src/Self-driving-car/src/Traffic.h5"
 sign_model = tf.keras.models.load_model(model_path)
@@ -37,9 +41,11 @@ def image_callback(data):
 		image_np = image_global.copy()
 		image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
 
-		thread = threading.Thread(target=callback_processing_thread, args=(image_np,))
-		thread.start()
-		# callback_processing_thread(image_np)
+		# thread = threading.Thread(target=callback_processing_thread, args=(image_np,))
+		# thread.start()
+
+		# thread.join()
+		callback_processing_thread(image_np)
 
 	except CvBridgeError as e:
 		print(e)
@@ -55,11 +61,11 @@ def detect_keypoints(draw_image):
 
     # Set Circularity filtering parameters 
 	params.filterByCircularity = True 
-	params.minCircularity = 0.9
+	params.minCircularity = 0.87
 
     # Set Convexity filtering parameters 
 	params.filterByConvexity = True
-	params.minConvexity = 0.2
+	params.minConvexity = 0.02
         
     # Set inertia filtering parameters 
 	params.filterByInertia = True
@@ -74,7 +80,7 @@ def detect_keypoints(draw_image):
 	return keypoints
 
 def callback_processing_thread(proc_image):
-	global image_global, image_global_mutex, sign_model
+	global image_global, image_global_mutex, sign_model, count, flag, range_image, perios_range_image
 	image = None
 	# image_global_mutex.acquire()
 	if image_global is not None:
@@ -115,8 +121,8 @@ def callback_processing_thread(proc_image):
 			br_y = min(im_height-1, tl_y + 2 * radius + pad)
 
 			rect = ((tl_x, tl_y), (br_x, br_y))
-
 			crop = image[tl_y:br_y, tl_x:br_x]
+			range_image = tl_x - tl_y
 
 			image_fromarray = IM.fromarray(crop, 'RGB')
 			resize_image = image_fromarray.resize((30, 30))
@@ -128,37 +134,73 @@ def callback_processing_thread(proc_image):
 			result = preds.argmax()
 
 	if result == 14:
+		print("Stop Sign")
+		flag = 1
 		cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
 		draw = cv2.putText(draw, "Stop Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX ,  
             0.5, (0,255,0), 1, cv2.LINE_AA) 
-		print("Stop Sign")
-		command = "STOP"
+		if(perios_range_image < range_image):
+			perios_range_image = range_image
+			count = 0
     
 	elif result == 33:
+		flag = 2
 		cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
 		draw = cv2.putText(draw, "Turn Right Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX ,  
             0.5, (0,255,0), 1, cv2.LINE_AA) 
 		print("Turn Right Sign")
-		command = "TURN_RIGHT"
+		if(perios_range_image < range_image):
+			perios_range_image = range_image
+			count = 0
 
 	elif result == 34:
+		flag = 3
 		cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
 		draw = cv2.putText(draw, "Turn Left Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX ,  
             0.5, (0,255,0), 1, cv2.LINE_AA) 
 		print("Turn Left Sign")
-		command = "TURN_LEFT"
+		if(perios_range_image < range_image):
+			perios_range_image = range_image
+			count = 0
     
 	elif result == 35:
+		flag = 4
 		cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
 		draw = cv2.putText(draw, "Go Straight Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX ,  
             0.5, (0,255,0), 1, cv2.LINE_AA) 
 		print("Go Straight Sign")
-		command = "GO_STRAIGHT"
+		# command = "GO_STRAIGHT"
 	else:
 		print("No info")
-		command = "NO_INFO"
-			
-	command_pub.publish(command)
+		if perios_range_image == range_image :
+				count += 1
+		
+		if flag == 1:
+			if count == 10:
+				count = 0
+				perios_range_image = 0
+				range_image = 0
+				command_pub.publish("STOP")
+				flag = 0
+		elif flag == 2:
+			if count == 10:
+				count = 0
+				perios_range_image = 0
+				range_image = 0
+				command_pub.publish("TURN_RIGHT")
+				flag = 0
+		elif flag == 3:
+			if count == 10:
+				count = 0
+				perios_range_image = 0
+				range_image = 0
+				command_pub.publish("TURN_LEFT")
+				flag = 0
+		else:
+			pass
+		
+	# print(count, flag, range_image, perios_range_image)		
+	# command_pub.publish(command)
 	sign_debug_stream_pub.publish(cv_bridge.cv2_to_imgmsg(draw, "bgr8"))
 
 	# cv2.imshow("Image", draw)
@@ -172,6 +214,7 @@ def main():
 	img_sub = rospy.Subscriber("/image_raw", Image, image_callback, queue_size=1)
 	img_debug_sub = rospy.Subscriber("/sign_detection", Image, image_debug_callback, queue_size=1)
 
+	command_pub.publish("START")
 	rospy.spin()
 
 if __name__ == '__main__':

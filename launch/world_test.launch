@@ -37,7 +37,13 @@
 	respawn="false"
     output="screen">
   </node-->
-
+  
+  <!--ode name="auto_control_command" 
+	pkg="self-driving-car" 
+	type="auto_control_command.py" 
+	respawn="false"
+    output="screen">
+</node-->
   <group ns="$(arg ns)">
     <!-- Load joint controller configurations from YAML file to parameter server -->
     <rosparam command="load"

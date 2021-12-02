@@ -65,5 +65,7 @@ install(TARGETS vehicle_input_subscriber vehicle_info_publisher
 catkin_install_python(PROGRAMS src/auto_control.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-
+catkin_install_python(PROGRAMS src/auto_control_command.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
