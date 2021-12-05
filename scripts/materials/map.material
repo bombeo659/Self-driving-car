@@ -13,7 +13,7 @@ material map/material
 
       texture_unit
       {
-        texture map.jpg
+        texture map.png
       }
     }
   }

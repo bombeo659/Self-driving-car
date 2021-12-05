@@ -82,8 +82,8 @@ def region_of_interest(canny):
     mask_roi = np.zeros_like(canny)
     left_bottom = [0, ysize]
     right_bottom = [xsize, ysize]
-    apex_left = [(0), ((ysize/2)+40)]
-    apex_right = [(xsize), ((ysize/2)+40)]
+    apex_left = [(0+10), ((ysize/2)+80)]
+    apex_right = [(xsize-10), ((ysize/2)+80)]
     mask_color = 255
     roi_corners = np.array(
         [[left_bottom, apex_left, apex_right, right_bottom]], dtype=np.int32)
@@ -175,7 +175,7 @@ def compute_steering_angle(frame, lane_lines):
     # angle (in radian) to center vertical line
     angle_to_mid_radian = math.atan(x_offset / y_offset)
     # angle (in degrees) to center vertical line
-    angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi)
+    angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi * 1.2)
     # this is the steering angle needed by picar front wheel
     steering_angle = angle_to_mid_deg + 90
 

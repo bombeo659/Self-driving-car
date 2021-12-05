@@ -2,144 +2,138 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from threading import Thread, Lock
+import queue
+from PIL import Image as IM
 
 
-class SignDetector:
+class SignDetector():
 
-	def __init__(self, cv_bridge):
+    def __init__(self, image_queue):
+        self.image_queue = image_queue
+        self.image_mutex = Lock()
+        self.model_path = "/home/nqt/catkin_ws/src/Self-driving-car/src/Traffic.h5"
+        self.sign_model = tf.keras.models.load_model(self.model_path)
+        self.data = None
+        self.sign_detector_thread(self.image_queue)
 
-		self.cv_bridge = cv_bridge
+    def sign_detector_thread(self, image_queue):
+    	while True:
+            image = image_queue.get()
+            gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            if image is None:
+                return
+            # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            # ======= Process depth image =======
+            result = 0
+            draw = image.copy()
+            keypoints = None
+            keypoints = detect_keypoints(gray_image)
 
-		self.image_mutex = Lock()
-		self.image = None
+            if "KeyPoint" not in str(keypoints):
+                pass
+            else:
+                blank = np.zeros((1, 1))
+                draw = cv2.drawKeypoints(draw, keypoints, blank, (0, 0, 255),
+                                         cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-		self.model_path = "/home/nqt/catkin_ws/src/Self-driving-car/src/Traffic.h5"
-		self.sign_model = tf.keras.models.load_model(self.model_path)
+                rects = []
+                crops = []
 
-	def callback_image(self, data):
-		try:
-			image_np = self.cv_bridge.imgmsg_to_cv2(data, "bgr8")
+                for keypoint in keypoints:
+                    x = keypoint.pt[0]
+                    y = keypoint.pt[1]
+                    center = (int(x), int(y))
+                    radius = int(keypoint.size / 2)
 
-			image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
+                    # Bounding box:
+                    im_height, im_width, _ = draw.shape
+                    pad = int(0.4*radius)
+                    tl_x = max(0, center[0] - radius - pad)
+                    tl_y = max(0, center[1] - radius - pad)
+                    br_x = min(im_width-1, tl_x + 2 * radius + pad)
+                    br_y = min(im_height-1, tl_y + 2 * radius + pad)
 
-			self.image_mutex.acquire()
-			self.image = image_np.copy()
-			self.image_mutex.release()
+                    rect = ((tl_x, tl_y), (br_x, br_y))
+                    crop = image[tl_y:br_y, tl_x:br_x]
+                    range_image = abs(tl_x - tl_y)
 
-			self.callback_processing_thread(image_np)
+                    image_fromarray = IM.fromarray(crop, 'RGB')
+                    resize_image = image_fromarray.resize((30, 30))
+                    expand_input = np.expand_dims(resize_image, axis=0)
+                    input_data = np.array(expand_input)
+                    input_data = input_data/255
 
-		except CvBridgeError as e:
-			print(e)
+                    preds = self.sign_model.predict(input_data)
+                    result = preds.argmax()
 
-	def detect_keypoints(self, draw_image):
-		draw_image = cv2.medianBlur(draw_image, 5)
-		kernel = np.ones((5, 5), np.uint8)
-		opening = cv.morphologyEx(draw_image, cv.MORPH_OPEN, kernel)
-		# Set our filtering parameters
-		# Initialize parameter settiing using cv2.SimpleBlobDetector
-		params = cv2.SimpleBlobDetector_Params()
+            if result == 14:
+                print("Stop Sign")
+                flag = 1
+                cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
+                draw = cv2.putText(draw, "Stop Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
+                                   0.5, (0, 255, 0), 1, cv2.LINE_AA)
+                if(perios_range_image < range_image):
+                    perios_range_image = range_image
+                    count = 0
 
-		# Set Area filtering parameters
-		params.filterByArea = True
-		params.minArea = 100
+            elif result == 33:
+                flag = 2
+                cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
+                draw = cv2.putText(draw, "Turn Right Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
+                                   0.5, (0, 255, 0), 1, cv2.LINE_AA)
+                print("Turn Right Sign")
+                if(perios_range_image < range_image):
+                    perios_range_image = range_image
+                    count = 0
 
-        # Set Circularity filtering parameters
-		params.filterByCircularity = True
-		params.minCircularity = 0.9
+            elif result == 34:
+                flag = 3
+                cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
+                draw = cv2.putText(draw, "Turn Left Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
+                                   0.5, (0, 255, 0), 1, cv2.LINE_AA)
+                print("Turn Left Sign")
+                if(perios_range_image < range_image):
+                    perios_range_image = range_image
+                    count = 0
 
-        # Set Convexity filtering parameters
-		params.filterByConvexity = True
-		params.minConvexity = 0.2
+            elif result == 35:
+                flag = 4
+                cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
+                draw = cv2.putText(draw, "Go Straight Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
+                                   0.5, (0, 255, 0), 1, cv2.LINE_AA)
+                print("Go Straight Sign")
 
-        # Set inertia filtering parameters
-		params.filterByInertia = True
-		params.minInertiaRatio = 0.01
+            else:
+                print("No info")
 
-		# Create a detector with the parameters
-		detector = cv2.SimpleBlobDetector_create(params)
+            self.data = flag
 
-		# Detect blobs
-		keypoints = detector.detect(draw_image)
 
-		return keypoints
+def detect_keypoints(image):
+    # Set our filtering parameters
+    # Initialize parameter settiing using cv2.SimpleBlobDetector
+    params = cv2.SimpleBlobDetector_Params()
 
-	def callback_processing_thread(self, proc_image):
-	    	# Local copy
-		image = None
-		#self.image_mutex.acquire()
-		if self.image is not None:
-			image = self.image.copy()
-		#self.image_mutex.release()
+    # Set Area filtering parameters
+    params.filterByArea = True
+    params.minArea = 100
 
-		if image is None:
-			return
+    # Set Circularity filtering parameters
+    params.filterByCircularity = True
+    params.minCircularity = 0.87
 
-        # ======= Process depth image =======
-		keypoints = self.detect_keypoints(proc_image)
+    # Set Convexity filtering parameters
+    params.filterByConvexity = True
+    params.minConvexity = 0.02
 
-		draw = image.copy()
-		blank = np.zeros((1, 1))
-		draw = cv2.drawKeypoints(draw, keypoints, blank, (0, 255, 0),
-                           cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    # Set inertia filtering parameters
+    params.filterByInertia = True
+    params.minInertiaRatio = 0.01
 
-		rects = []
-		crops = []
+    # Create a detector with the parameters
+    detector = cv2.SimpleBlobDetector_create(params)
 
-		img_rgb = cv2.cvtColor(draw, cv2.COLOR_BGR2RGB)
+    # Detect blobs
+    keypoints = detector.detect(image)
 
-		for keypoint in keypoints:
-			x = keypoint.pt[0]
-			y = keypoint.pt[1]
-			center = (int(x), int(y))
-			radius = int(keypoint.size / 2)
-
-			# Bounding box:
-			im_height, im_width, _ = img_rgb.shape
-			pad = int(0.4*radius)
-			tl_x = max(0, center[0] - radius - pad)
-			tl_y = max(0, center[1] - radius - pad)
-			br_x = min(im_width-1, tl_x + 2 * radius + pad)
-			br_y = min(im_height-1, tl_y + 2 * radius + pad)
-
-			rect = ((tl_x, tl_y), (br_x, br_y))
-
-			crop = img_rgb[tl_y:br_y, tl_x:br_x]
-
-			if crop.shape[0] > 0 and crop.shape[1] > 0:
-				crop = cv.resize(crop, (32, 32))
-				crop = crop.astype(np.float32) / 255.0
-				crops.append(crop)
-				rects.append(rect)
-
-		if len(crops) != 0:
-
-			preds = self.sign_model.predict(np.array(crops))
-			preds = np.argmax(preds, axis=1)
-			preds = preds.tolist()
-
-			for i in range(len(preds)):
-				if preds[i] == 14:
-					cv2.rectangle(draw, rects[0], rects[1], (0, 0, 255), 3)
-					draw = cv2.putText(draw, "Stop Sign", rects[0], cv2.FONT_HERSHEY_SIMPLEX,
-                                            0.5, (0, 255, 0), 1, cv2.LINE_AA)
-					print("Stop Sign")
-
-				elif preds[i] == 33:
-					cv2.rectangle(draw, rects[0], rects[1], (255, 0, 0), 3)
-					draw = cv2.putText(draw, "Turn Right Sign", rects[0], cv2.FONT_HERSHEY_SIMPLEX,
-                                            0.5, (0, 255, 0), 1, cv2.LINE_AA)
-					print("Turn Right Sign")
-
-				elif preds[i] == 34:
-					cv2.rectangle(draw, rects[0], rects[1], (0, 0, 255), 3)
-					draw = cv2.putText(draw, "Turn Left Sign", rects[0], cv2.FONT_HERSHEY_SIMPLEX,
-                                            0.5, (0, 255, 0), 1, cv2.LINE_AA)
-					print("Turn Left Sign")
-
-				elif preds[i] == 35:
-					cv2.rectangle(draw, rects[0], rects[1], (255, 0, 0), 3)
-					draw = cv2.putText(draw, "Go Straight Sign", rects[0], cv2.FONT_HERSHEY_SIMPLEX,
-                                            0.5, (0, 255, 0), 1, cv2.LINE_AA)
-					print("Go Straight Sign")
-
-			sign_debug_stream_pub.publish(bridge.cv2_to_imgmsg(draw, "bgr8"))
+    return keypoints

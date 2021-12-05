@@ -62,6 +62,15 @@ install(TARGETS vehicle_input_subscriber vehicle_info_publisher
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+catkin_install_python(PROGRAMS
+  src/auto_control.py
+  src/auto_control_command.py
+  src/lane_detector.py
+  src/control.py
+ 	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+
 #catkin_install_python(PROGRAMS src/auto_control.py
 #  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 #)
