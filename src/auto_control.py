@@ -41,11 +41,11 @@ def image_callback(data):
 		image_np = image_global.copy()
 		image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
 
-		# thread = threading.Thread(target=callback_processing_thread, args=(image_np,))
-		# thread.start()
+		thread = threading.Thread(target=callback_processing_thread, args=(image_np,))
+		thread.start()
 
-		# thread.join()
-		callback_processing_thread(image_np)
+		thread.join()
+		# callback_processing_thread(image_np)
 
 	except CvBridgeError as e:
 		print(e)
@@ -122,7 +122,7 @@ def callback_processing_thread(proc_image):
 
 			rect = ((tl_x, tl_y), (br_x, br_y))
 			crop = image[tl_y:br_y, tl_x:br_x]
-			range_image = tl_x - tl_y
+			range_image = abs(tl_x - tl_y)
 
 			image_fromarray = IM.fromarray(crop, 'RGB')
 			resize_image = image_fromarray.resize((30, 30))
@@ -169,42 +169,28 @@ def callback_processing_thread(proc_image):
 		draw = cv2.putText(draw, "Go Straight Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX ,  
             0.5, (0,255,0), 1, cv2.LINE_AA) 
 		print("Go Straight Sign")
-		# command = "GO_STRAIGHT"
+
 	else:
 		print("No info")
-		if perios_range_image == range_image :
+		if (perios_range_image == range_image):
 				count += 1
 		
-		if flag == 1:
-			if count == 10:
-				count = 0
-				perios_range_image = 0
-				range_image = 0
+		if count == 10:
+			count = 0
+			range_image = 0
+			perios_range_image = 0
+			if flag == 1:
 				command_pub.publish("STOP")
-				flag = 0
-		elif flag == 2:
-			if count == 10:
-				count = 0
-				perios_range_image = 0
-				range_image = 0
+			elif flag == 2:
 				command_pub.publish("TURN_RIGHT")
-				flag = 0
-		elif flag == 3:
-			if count == 10:
-				count = 0
-				perios_range_image = 0
-				range_image = 0
+			elif flag == 3:
 				command_pub.publish("TURN_LEFT")
-				flag = 0
+
+			flag = 0	
 		else:
 			pass
-		
-	# print(count, flag, range_image, perios_range_image)		
-	# command_pub.publish(command)
+	# print(count)	
 	sign_debug_stream_pub.publish(cv_bridge.cv2_to_imgmsg(draw, "bgr8"))
-
-	# cv2.imshow("Image", draw)
-	# cv2.waitKey(1)
 
 def main():
 	global rate

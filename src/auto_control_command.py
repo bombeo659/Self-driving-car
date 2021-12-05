@@ -13,10 +13,9 @@ def callback(data):
 
    elif data.data == "TURN_RIGHT":
       start = rospy.get_time()
-      duration = rospy.Duration(3)
+      duration = rospy.Duration(0.5)
       while((rospy.get_time() - start) < duration.to_sec()):
          pass
-
       start = rospy.get_time()
       duration = rospy.Duration(3)
       while((rospy.get_time() - start) < duration.to_sec()):
@@ -24,26 +23,25 @@ def callback(data):
          steeting_angle_pub.publish(Float64(-2))
 
       start = rospy.get_time()
-      duration = rospy.Duration(2.5)
+      duration = rospy.Duration(2.8)
       while((rospy.get_time() - start) < duration.to_sec()):
          velocity_pub.publish(Float64(4))
          steeting_angle_pub.publish(Float64(0))
 
       start = rospy.get_time()
-      duration = rospy.Duration(4.5)
+      duration = rospy.Duration(4.3)
       while((rospy.get_time() - start) < duration.to_sec()):
          velocity_pub.publish(Float64(4))
          steeting_angle_pub.publish(Float64(-2))
 
-      velocity_pub.publish(Float64(3))
+      velocity_pub.publish(Float64(5))
       steeting_angle_pub.publish(Float64(0))
 
    elif data.data == "TURN_LEFT":
       start = rospy.get_time()
-      duration = rospy.Duration(2)
+      duration = rospy.Duration(0.2)
       while((rospy.get_time() - start) < duration.to_sec()):
          pass
-
       start = rospy.get_time()
       duration = rospy.Duration(3)
       while((rospy.get_time() - start) < duration.to_sec()):
@@ -51,7 +49,7 @@ def callback(data):
          steeting_angle_pub.publish(Float64(2))
 
       start = rospy.get_time()
-      duration = rospy.Duration(2.5)
+      duration = rospy.Duration(1.3)
       while((rospy.get_time() - start) < duration.to_sec()):
          velocity_pub.publish(Float64(4))
          steeting_angle_pub.publish(Float64(0))
@@ -62,7 +60,7 @@ def callback(data):
          velocity_pub.publish(Float64(4))
          steeting_angle_pub.publish(Float64(2))
 
-      velocity_pub.publish(Float64(3))
+      velocity_pub.publish(Float64(5))
       steeting_angle_pub.publish(Float64(0))
 
    elif data.data == "GO_STRAIGHT":
@@ -70,7 +68,7 @@ def callback(data):
       steeting_angle_pub.publish(Float64(0))
 
    elif data.data == "START":
-      velocity_pub.publish(Float64(3))
+      velocity_pub.publish(Float64(5))
       steeting_angle_pub.publish(Float64(0))
    else:
       pass
