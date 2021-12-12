@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import math
-import rospy
 
 _SHOW_IMAGE = False
 
@@ -79,16 +78,16 @@ def region_of_interest(canny):
     gray_blur = cv2.GaussianBlur(canny, (5, 5), 0)
 
     # Region of Interest Extraction
-    mask_roi = np.zeros_like(canny)
-    left_bottom = [0, ysize]
-    right_bottom = [xsize, ysize]
-    apex_left = [(0+10), ((ysize/2)+80)]
-    apex_right = [(xsize-10), ((ysize/2)+80)]
+    mask_roi = np.zeros_like(gray_blur)
+    left_bottom = [0+60, ysize]
+    right_bottom = [xsize-60, ysize]
+    apex_left = [(0+100), ((ysize/2)+60)]
+    apex_right = [(xsize-100), ((ysize/2)+60)]
     mask_color = 255
     roi_corners = np.array(
         [[left_bottom, apex_left, apex_right, right_bottom]], dtype=np.int32)
     cv2.fillPoly(mask_roi, roi_corners, mask_color)
-    masked_image = cv2.bitwise_and(canny, mask_roi)
+    masked_image = cv2.bitwise_and(gray_blur, mask_roi)
 
     return masked_image
 
@@ -98,7 +97,7 @@ def detect_line_segments(cropped_edges):
     rho = 1  # precision in pixel, i.e. 1 pixel
     angle = np.pi / 180  # degree in radian, i.e. 1 degree
     min_threshold = 10  # minimal of votes
-    line_segments = cv2.HoughLinesP(cropped_edges, rho, angle, min_threshold, np.array([]), minLineLength=8,
+    line_segments = cv2.HoughLinesP(cropped_edges, rho, angle, min_threshold, np.array([]), minLineLength=10,
                                     maxLineGap=4)
 
     return line_segments
@@ -118,8 +117,8 @@ def average_slope_intercept(frame, line_segments):
     left_fit = []
     right_fit = []
 
-    # boundary = 1/3
-    boundary = 1/2
+    boundary = 1/3
+    # boundary = 1/2
     # left lane line segment should be on left 2/3 of the screen
     left_region_boundary = width * (1 - boundary)
     # right lane line segment should be on left 1/3 of the screen
@@ -170,12 +169,12 @@ def compute_steering_angle(frame, lane_lines):
         x_offset = (left_x2 + right_x2) / 2 - mid
 
     # find the steering angle, which is angle between navigation direction to end of center line
-    y_offset = int(height / 2)
+    y_offset = int(2*height / 3)
 
     # angle (in radian) to center vertical line
     angle_to_mid_radian = math.atan(x_offset / y_offset)
     # angle (in degrees) to center vertical line
-    angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi * 1.2)
+    angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi*0.6)
     # this is the steering angle needed by picar front wheel
     steering_angle = angle_to_mid_deg + 90
 
@@ -205,13 +204,13 @@ def stabilize_steering_angle(curr_steering_angle, new_steering_angle, num_of_lan
     return stabilized_steering_angle
 
 
-def display_lines(frame, lines, line_color=(0, 255, 0), line_width=10):
+def display_lines(frame, lines, line_color=(0, 255, 0), line_width=8, line_hight=4):
     line_image = np.zeros_like(frame)
     if lines is not None:
         for line in lines:
             for x1, y1, x2, y2 in line:
                 cv2.line(line_image, (x1, y1), (x2, y2),
-                         line_color, line_width)
+                         line_color, line_width, line_hight)
     line_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
     return line_image
 
@@ -231,8 +230,8 @@ def display_heading_line(frame, steering_angle, line_color=(0, 0, 255), line_wid
     steering_angle_radian = steering_angle / 180.0 * math.pi
     x1 = int(width / 2)
     y1 = height
-    x2 = int(x1 - height / 2 / math.tan(steering_angle_radian))
-    y2 = int(height / 2)
+    x2 = int(x1 - 2*height / 3 / math.tan(steering_angle_radian))
+    y2 = int(2*height / 3)
 
     cv2.line(heading_image, (x1, y1), (x2, y2), line_color, line_width)
     heading_image = cv2.addWeighted(frame, 0.8, heading_image, 1, 1)
@@ -248,14 +247,14 @@ def length_of_line_segment(line):
 def show_image(title, frame, show=_SHOW_IMAGE):
     if show:
         cv2.imshow(title, frame)
-    # cv2.waitKey(0)
+        # cv2.waitKey(0)
 
 
 def make_points(frame, line):
     height, width, _ = frame.shape
     slope, intercept = line
     y1 = height  # bottom of the frame
-    y2 = int(y1 * 1 / 2)  # make points from middle of the frame down
+    y2 = int(y1 * 2 / 3)  # make points from middle of the frame down
 
     # bound the coordinates within the frame
     x1 = max(-width, min(2 * width, int((y1 - intercept) / slope)))

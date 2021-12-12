@@ -4,7 +4,7 @@
   <arg name="model" value="$(find self-driving-car)/urdf/vehicle.xacro"/>
   <arg name="ns" value="/autoware_gazebo"/>
   <arg name="gpu" default="false"/>
-  <arg name="rvizconfig" default="$(find urdf_tutorial)/rviz/urdf.rviz" />
+  <!--arg name="rvizconfig" default="$(find urdf_tutorial)/rviz/urdf.rviz" /-->
   <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model) gpu:=$(arg gpu)" />
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -21,19 +21,19 @@
 	type="spawn_model" 
 	args="-param robot_description -urdf -model autoware_gazebo" 
 	/>
-  <node name="rviz" 
+  <!--node name="rviz" 
 	pkg="rviz" 
 	type="rviz" 
 	args="-d $(arg rvizconfig)" required="true" 
-	/>
+	/-->
   <node name="rqt_robot_steering" 
 	pkg="rqt_robot_steering" 
 	type="rqt_robot_steering" 
 	/>
 	
-  <!--node name="auto_control" 
+  <!--node name="control" 
 	pkg="self-driving-car" 
-	type="auto_control.py" 
+	type="control.py" 
 	respawn="false"
     output="screen">
   </node-->
@@ -62,9 +62,9 @@
 		joint_state_controller"/>
 
     <!-- tf publisher -->
-    <node name="robot_state_publisher" 
+    <!--node name="robot_state_publisher" 
 	pkg="robot_state_publisher" 
-	type="robot_state_publisher" />
+	type="robot_state_publisher" /-->
 
     <rosparam command="load"
 		file="$(find self-driving-car)/config/vehicle_info.yaml" />
@@ -78,11 +78,5 @@
       	<remap from="twist_cmd" to="/twist_cmd"/>
     </node>
 
-    <node name="vehicle_info_publisher" 
-	pkg="self-driving-car" 
-	type="vehicle_info_publisher" 
-	respawn="false"
-        output="screen">
-    </node>
   </group>
 </launch>
