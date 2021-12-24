@@ -13,7 +13,7 @@ material map/material
 
       texture_unit
       {
-        texture map.png
+        texture map1.png
       }
     }
   }

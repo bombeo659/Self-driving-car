@@ -11,104 +11,132 @@ import queue
 from PIL import Image as IM
 
 
-class SignDetector():
+image_global = None
+image_global_mutex = Lock()
+rate = 0
+range_image = 0
+perios_range_image = 0
+count = 0
+flag = 0  # 0: no info 1: stop 2: left 3: right
 
-    def __init__(self, image_queue):
-        self.image_queue = image_queue
-        self.image_mutex = Lock()
-        self.model_path = "/home/nqt/catkin_ws/src/Self-driving-car/src/Traffic.h5"
-        self.sign_model = tf.keras.models.load_model(self.model_path)
-        self.data = None
-        self.sign_detector_thread(self.image_queue)
+model_path = "/home/nqt/catkin_ws/src/Self-driving-car/src/Traffic.h5"
+sign_model = tf.keras.models.load_model(model_path)
 
-    def sign_detector_thread(self, image_queue):
-        while True:
-            image = image_queue.get()
-            gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            if image is None:
-                return
-            # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            # ======= Process depth image =======
-            result = 0
-            draw = image.copy()
-            keypoints = None
-            keypoints = detect_keypoints(gray_image)
 
-            if "KeyPoint" not in str(keypoints):
-                pass
-            else:
-                blank = np.zeros((1, 1))
-                draw = cv2.drawKeypoints(draw, keypoints, blank, (0, 0, 255),
-                                         cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+def callback_processing_thread(proc_image):
+    global image_global, image_global_mutex, sign_model, count, flag, range_image, perios_range_image
+    image = None
+    # image_global_mutex.acquire()
+    if image_global is not None:
+        image = image_global.copy()
+        # image_global_mutex.release()
 
-                for keypoint in keypoints:
-                    x = keypoint.pt[0]
-                    y = keypoint.pt[1]
-                    center = (int(x), int(y))
-                    radius = int(keypoint.size / 2)
+    if image is None:
+        return
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # ======= Process depth image =======
+    result = 0
+    draw = image.copy()
+    # cv2.imshow("daw", draw)
+    # cv2.waitKey(0)
+    keypoints = None
+    keypoints = detect_keypoints(proc_image)
 
-                    # Bounding box:
-                    im_height, im_width, _ = draw.shape
-                    pad = int(0.4*radius)
-                    tl_x = max(0, center[0] - radius - pad)
-                    tl_y = max(0, center[1] - radius - pad)
-                    br_x = min(im_width-1, tl_x + 2 * radius + pad)
-                    br_y = min(im_height-1, tl_y + 2 * radius + pad)
+    if "KeyPoint" not in str(keypoints):
+        pass
+    else:
+        blank = np.zeros((1, 1))
+        draw = cv2.drawKeypoints(draw, keypoints, blank, (0, 0, 255),
+                                 cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-                    rect = ((tl_x, tl_y), (br_x, br_y))
-                    crop = image[tl_y:br_y, tl_x:br_x]
-                    range_image = abs(tl_x - tl_y)
+        for keypoint in keypoints:
+            x = keypoint.pt[0]
+            y = keypoint.pt[1]
+            center = (int(x), int(y))
+            radius = int(keypoint.size / 2)
 
-                    image_fromarray = IM.fromarray(crop, 'RGB')
-                    resize_image = image_fromarray.resize((30, 30))
-                    expand_input = np.expand_dims(resize_image, axis=0)
-                    input_data = np.array(expand_input)
-                    input_data = input_data/255
+            # Bounding box:
+            im_height, im_width, _ = draw.shape
+            pad = int(0.4*radius)
+            tl_x = max(0, center[0] - radius - pad)
+            tl_y = max(0, center[1] - radius - pad)
+            br_x = min(im_width-1, tl_x + 2 * radius + pad)
+            br_y = min(im_height-1, tl_y + 2 * radius + pad)
 
-                    preds = self.sign_model.predict(input_data)
-                    result = preds.argmax()
+            rect = ((tl_x, tl_y), (br_x, br_y))
+            crop = image[tl_y:br_y, tl_x:br_x]
+            range_image = abs(tl_x - tl_y)
 
-            if result == 14:
-                print("Stop Sign")
-                flag = 1
-                cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
-                draw = cv2.putText(draw, "Stop Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
-                                   0.5, (0, 255, 0), 1, cv2.LINE_AA)
-                if(perios_range_image < range_image):
-                    perios_range_image = range_image
-                    count = 0
+            image_fromarray = IM.fromarray(crop, 'RGB')
+            resize_image = image_fromarray.resize((30, 30))
+            expand_input = np.expand_dims(resize_image, axis=0)
+            input_data = np.array(expand_input)
+            input_data = input_data/255
 
-            elif result == 33:
-                flag = 2
-                cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
-                draw = cv2.putText(draw, "Turn Right Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
-                                   0.5, (0, 255, 0), 1, cv2.LINE_AA)
-                print("Turn Right Sign")
-                if(perios_range_image < range_image):
-                    perios_range_image = range_image
-                    count = 0
+            preds = sign_model.predict(input_data)
+            result = preds.argmax()
 
-            elif result == 34:
-                flag = 3
-                cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
-                draw = cv2.putText(draw, "Turn Left Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
-                                   0.5, (0, 255, 0), 1, cv2.LINE_AA)
-                print("Turn Left Sign")
-                if(perios_range_image < range_image):
-                    perios_range_image = range_image
-                    count = 0
+    if result == 14:
+        print("Stop Sign")
+        flag = 1
+        cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
+        draw = cv2.putText(draw, "Stop Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
+                           0.5, (0, 255, 0), 1, cv2.LINE_AA)
+        if(perios_range_image < range_image):
+            perios_range_image = range_image
+            count = 0
 
-            elif result == 35:
-                flag = 4
-                cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
-                draw = cv2.putText(draw, "Go Straight Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
-                                   0.5, (0, 255, 0), 1, cv2.LINE_AA)
-                print("Go Straight Sign")
+    elif result == 33:
+        flag = 2
+        cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
+        draw = cv2.putText(draw, "Turn Right Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
+                           0.5, (0, 255, 0), 1, cv2.LINE_AA)
+        print("Turn Right Sign")
+        if(perios_range_image < range_image):
+            perios_range_image = range_image
+            count = 0
 
-            else:
-                print("No info")
+    elif result == 34:
+        flag = 3
+        cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
+        draw = cv2.putText(draw, "Turn Left Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
+                           0.5, (0, 255, 0), 1, cv2.LINE_AA)
+        print("Turn Left Sign")
+        if(perios_range_image < range_image):
+            perios_range_image = range_image
+            count = 0
 
-            self.data = flag
+    elif result == 35:
+        flag = 4
+        cv2.rectangle(draw, rect[0], rect[1], (0, 0, 255), 2)
+        draw = cv2.putText(draw, "Go Straight Sign", rect[0], cv2.FONT_HERSHEY_SIMPLEX,
+                           0.5, (0, 255, 0), 1, cv2.LINE_AA)
+        print("Go Straight Sign")
+
+    else:
+        print("No info")
+        # if (perios_range_image == range_image):
+        #     count += 1
+        # else:
+        #     pass
+
+        # if count == 10:
+        #     count = 0
+        #     range_image = 0
+        #     perios_range_image = 0
+        #     if flag == 1:
+        #         print("STOP")
+        #     elif flag == 2:
+        #         print("TURN_RIGHT")
+        #     elif flag == 3:
+        #         print("TURN_LEFT")
+
+        #     flag = 0
+        # else:
+        #     pass
+
+    cv2.imshow("daw", draw)
+    cv2.waitKey(2)
 
 
 def detect_keypoints(image):
@@ -322,29 +350,6 @@ def compute_steering_angle(frame, lane_lines):
     return steering_angle
 
 
-# def stabilize_steering_angle(curr_steering_angle, new_steering_angle, num_of_lane_lines, max_angle_deviation_two_lines=5, max_angle_deviation_one_lane=1):
-#     """
-#     Using last steering angle to stabilize the steering angle
-#     This can be improved to use last N angles, etc
-#     if new angle is too different from current angle, only turn by max_angle_deviation degrees
-#     """
-#     if num_of_lane_lines == 2:
-#         # if both lane lines detected, then we can deviate more
-#         max_angle_deviation = max_angle_deviation_two_lines
-#     else:
-#         # if only one lane detected, don't deviate too much
-#         max_angle_deviation = max_angle_deviation_one_lane
-
-#     angle_deviation = new_steering_angle - curr_steering_angle
-#     if abs(angle_deviation) > max_angle_deviation:
-#         stabilized_steering_angle = int(curr_steering_angle
-#                                         + max_angle_deviation * angle_deviation / abs(angle_deviation))
-#     else:
-#         stabilized_steering_angle = new_steering_angle
-
-#     return stabilized_steering_angle
-
-
 def display_lines(frame, lines, line_color=(0, 255, 0), line_width=8, line_hight=4):
     line_image = np.zeros_like(frame)
     if lines is not None:
@@ -452,12 +457,19 @@ def lane_callback(data):
     except CvBridgeError as e:
         print(e)
 
+
 def sign_callback(data):
+    global image_global
     try:
-        frame = cv_bridge.imgmsg_to_cv2(data, "bgr8")
-        
+        image_global = cv_bridge.imgmsg_to_cv2(data, "bgr8")
+        image_np = image_global.copy()
+        image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
+
+        callback_processing_thread(image_np)
+
     except CvBridgeError as e:
         print(e)
+
 
 def main():
     global rate, velocity_pub
@@ -466,8 +478,8 @@ def main():
 
     lane_sub = rospy.Subscriber(
         "/image_raw", Image, lane_callback, queue_size=1)
-    sign_sub = rospy.Subscriber(
-        "/image_raw", Image, sign_callback, queue_size=1)
+    # sign_sub = rospy.Subscriber(
+    #     "/image_raw", Image, sign_callback, queue_size=1)
 
     rospy.spin()
 
