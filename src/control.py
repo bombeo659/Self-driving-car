@@ -350,7 +350,7 @@ def compute_steering_angle(frame, lane_lines):
     return steering_angle
 
 
-def display_lines(frame, lines, line_color=(0, 255, 0), line_width=8, line_hight=4):
+def display_lines(frame, lines, line_color=(0, 255, 0), line_width=5, line_hight=4):
     line_image = np.zeros_like(frame)
     if lines is not None:
         for line in lines:
@@ -361,7 +361,7 @@ def display_lines(frame, lines, line_color=(0, 255, 0), line_width=8, line_hight
     return line_image
 
 
-def display_heading_line(frame, steering_angle, line_color=(0, 0, 255), line_width=5, ):
+def display_heading_line(frame, steering_angle, line_color=(0, 0, 255), line_width=5, line_hight=4):
     heading_image = np.zeros_like(frame)
     height, width, _ = frame.shape
 
@@ -435,20 +435,17 @@ def lane_callback(data):
         if(land_follower.line == 2):
             velocity_pub.publish(Float64(5))
         elif(land_follower.line == 1):
-            velocity_pub.publish(Float64(2))
-            if(angle_rad > 0):
-                steeting_angle_pub.publish(Float64(angle_rad + 0.1))
-            else:
-                steeting_angle_pub.publish(Float64(angle_rad - 0.1))
+            velocity_pub.publish(Float64(3))
         else:
             velocity_pub.publish(Float64(0))
 
         if(len(steeting_angle) == 15):
             data = np.average(steeting_angle, axis=None)
-            angle_rad = (90 - data)/180 * math.pi * 1.2
+            angle_rad = round(((90 - data)/180 * math.pi * 1.2), 3)
 
             steeting_angle_pub.publish(Float64(angle_rad))
-            print("steering angle is: ", data, angle_rad, land_follower.line)
+            print("steering angle is: ", round(data, 3),
+                  angle_rad, land_follower.line)
             steeting_angle.clear()
 
         cv2.imshow('final', combo_image)
@@ -476,10 +473,10 @@ def main():
     rospy.init_node('control', anonymous=True)
     rate = rospy.Rate(10)
 
-    lane_sub = rospy.Subscriber(
-        "/image_raw", Image, lane_callback, queue_size=1)
-    # sign_sub = rospy.Subscriber(
-    #     "/image_raw", Image, sign_callback, queue_size=1)
+    # lane_sub = rospy.Subscriber(
+    #     "/image_raw", Image, lane_callback, queue_size=1)
+    sign_sub = rospy.Subscriber(
+        "/image_raw", Image, sign_callback, queue_size=1)
 
     rospy.spin()
 
