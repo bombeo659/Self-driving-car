@@ -191,9 +191,6 @@ class LaneDetector():
         if len(lane_lines) == 0:
             return frame
         self.curr_steering_angle = compute_steering_angle(frame, lane_lines)
-        # new_steering_angle = compute_steering_angle(frame, lane_lines)
-        # self.curr_steering_angle = stabilize_steering_angle(
-        #     self.curr_steering_angle, new_steering_angle, len(lane_lines))
 
         curr_heading_image = display_heading_line(
             frame, self.curr_steering_angle)
@@ -223,16 +220,11 @@ def detect_lane(frame):
 def detect_edges(frame):
     # Color space conversion
     img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    img_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HLS)
 
-    # Detecting yellow and white colors
-    low_yellow = np.array([20, 100, 100])
-    high_yellow = np.array([30, 255, 255])
-    mask_yellow = cv2.inRange(img_hsv, low_yellow, high_yellow)
+    # Detecting white colors
     mask_white = cv2.inRange(img_gray, 200, 255)
 
-    mask_yw = cv2.bitwise_or(mask_yellow, mask_white)
-    mask = cv2.bitwise_and(img_gray, mask_yw)
+    mask = cv2.bitwise_and(img_gray, mask_white)
 
     # detect edges
     edges = cv2.Canny(mask, 200, 400)
@@ -287,7 +279,6 @@ def average_slope_intercept(frame, line_segments):
     right_fit = []
 
     boundary = 1/3
-    # boundary = 1/2
     # left lane line segment should be on left 2/3 of the screen
     left_region_boundary = width * (1 - boundary)
     # right lane line segment should be on left 1/3 of the screen
@@ -365,21 +356,14 @@ def display_heading_line(frame, steering_angle, line_color=(0, 0, 255), line_wid
     heading_image = np.zeros_like(frame)
     height, width, _ = frame.shape
 
-    # figure out the heading line from steering angle
-    # heading line (x1,y1) is always center bottom of the screen
-    # (x2, y2) requires a bit of trigonometry
-
-    # Note: the steering angle of:
-    # 0-89 degree: turn left
-    # 90 degree: going straight
-    # 91-180 degree: turn right
     steering_angle_radian = steering_angle / 180.0 * math.pi
     x1 = int(width / 2)
     y1 = height
-    x2 = int(x1 - 2*height / 3 / math.tan(steering_angle_radian))
-    y2 = int(3*height / 4)
+    x2 = int(x1 - 2*height/3/math.tan(steering_angle_radian))
+    y2 = int(3*height/4)
 
-    cv2.line(heading_image, (x1, y1), (x2, y2), line_color, line_width)
+    cv2.line(heading_image, (x1, y1), (x2, y2),
+             line_color, line_width, line_hight)
     heading_image = cv2.addWeighted(frame, 0.8, heading_image, 1, 1)
 
     return heading_image
@@ -473,10 +457,10 @@ def main():
     rospy.init_node('control', anonymous=True)
     rate = rospy.Rate(10)
 
-    # lane_sub = rospy.Subscriber(
-    #     "/image_raw", Image, lane_callback, queue_size=1)
-    sign_sub = rospy.Subscriber(
-        "/image_raw", Image, sign_callback, queue_size=1)
+    lane_sub = rospy.Subscriber(
+        "/image_raw", Image, lane_callback, queue_size=1)
+    # sign_sub = rospy.Subscriber(
+    #     "/image_raw", Image, sign_callback, queue_size=1)
 
     rospy.spin()
 
