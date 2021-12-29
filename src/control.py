@@ -16,7 +16,6 @@ image_global = None
 image_global_mutex = Lock()
 rate = 0
 range_image = 0
-perios_range_image = 500
 count = 0
 flag = 0  # 0: no info 1: stop 2: left 3: right
 command_sign = 0
@@ -25,8 +24,9 @@ model_path = "/home/nqt/catkin_ws/src/Self-driving-car/src/Traffic.h5"
 sign_model = tf.keras.models.load_model(model_path)
 command_pub = rospy.Publisher("/command_control", String, queue_size=1)
 
+
 def callback_processing_thread(proc_image):
-    global image_global, image_global_mutex, sign_model, count, flag, range_image, perios_range_image
+    global image_global, image_global_mutex, sign_model, count, flag, range_image
     image = None
     # image_global_mutex.acquire()
     if image_global is not None:
@@ -35,7 +35,6 @@ def callback_processing_thread(proc_image):
 
     if image is None:
         return
-        # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # ======= Process depth image =======
     result = 0
     draw = image.copy()
@@ -83,9 +82,6 @@ def callback_processing_thread(proc_image):
             rects.append(rect)
             range_images.append(range_image)
 
-    # if len(range_images) != 0:
-    #     print(max(range_images))
-
     if len(range_images) != 0 and max(range_images) > 165 and len(input_data_list) != 0:
 
         preds = sign_model.predict(input_data_list)
@@ -119,22 +115,20 @@ def callback_processing_thread(proc_image):
             else:
                 pass
 
-    if flag != 0:
-        range_image = 0
-        perios_range_image = 500
-        if flag == 1:
-            command_pub.publish("STOP")
-        elif flag == 2:
-            command_pub.publish("TURN_RIGHT")
-        elif flag == 3:
-            command_pub.publish("TURN_LEFT")
-        elif flag == 4:
-            command_pub.publish("GO_STRAIGHT")
-        else:
-            pass
-        flag = 0
+    if flag == 1:
+        command_pub.publish("STOP")
+    elif flag == 2:
+        command_pub.publish("TURN_RIGHT")
+    elif flag == 3:
+        command_pub.publish("TURN_LEFT")
+    elif flag == 4:
+        command_pub.publish("GO_STRAIGHT")
     else:
         pass
+    flag = 0
+    input_data_list.clear()
+    rects.clear()
+    range_images.clear()
 
     cv2.imshow("Sign Detector", draw)
     cv2.waitKey(2)
@@ -401,15 +395,12 @@ steeting_angle_pub = rospy.Publisher(
     '/autoware_gazebo/steering_angle', Float64, queue_size=5)
 
 steeting_angle = []
-element = 0
-count = 0
-element1 = 0
-count1 = 0
 angle_rad = 0
+speed = 0
 
 
 def lane_callback(data):
-    global velocity_pub, steeting_angle_pub, element, count, element1, count1, angle_rad, command_sign
+    global velocity_pub, steeting_angle_pub, angle_rad, command_sign, speed
     try:
         land_follower = LaneDetector()
         frame = cv_bridge.imgmsg_to_cv2(data, "bgr8")
@@ -417,15 +408,15 @@ def lane_callback(data):
         if command_sign == 0:
             steeting_angle.append(land_follower.curr_steering_angle)
             if(land_follower.line == 2):
-                velocity_pub.publish(Float64(10))
+                speed = 10
             elif(land_follower.line == 1):
-                velocity_pub.publish(Float64(5))
+                speed = 5
             elif(land_follower.line == 0):
-                velocity_pub.publish(Float64(0))
+                speed = 0
             else:
                 pass
         elif command_sign == 1:
-            velocity_pub.publish(Float64(0))
+            speed = 0
         else:
             pass
 
@@ -433,11 +424,12 @@ def lane_callback(data):
             data = np.average(steeting_angle, axis=None)
             angle_rad = round(((90 - data)/180 * math.pi * 1.2), 3)
             if(land_follower.line == 1):
-                angle_rad = round(angle_rad + 0.25*angle_rad, 3)
-            steeting_angle_pub.publish(Float64(angle_rad))
-            print("steering angle is: ", round(data, 3),
-                  angle_rad, land_follower.line)
+                angle_rad = round(angle_rad + 0.5*angle_rad, 3)
             steeting_angle.clear()
+
+            velocity_pub.publish(Float64(speed))
+            steeting_angle_pub.publish(Float64(angle_rad))
+            print("Info: ", speed, angle_rad)
 
         cv2.imshow('Lane Detector', combo_image)
         cv2.waitKey(2)
@@ -470,22 +462,22 @@ def command_sign_callback(data):
 
     elif data.data == "TURN_RIGHT":
         command_sign = 2
-        velocity_pub.publish(Float64(15))
+        velocity_pub.publish(Float64(13))
         start = rospy.get_time()
-        duration = rospy.Duration(0.2)
+        duration = rospy.Duration(0.175)
         while((rospy.get_time() - start) < duration.to_sec()):
             steeting_angle_pub.publish(Float64(-0.55))
-        velocity_pub.publish(Float64(1))
+        velocity_pub.publish(Float64(0))
         command_sign = 0
 
     elif data.data == "TURN_LEFT":
         command_sign = 3
-        velocity_pub.publish(Float64(15))
+        velocity_pub.publish(Float64(13))
         start = rospy.get_time()
-        duration = rospy.Duration(0.2)
+        duration = rospy.Duration(0.175)
         while((rospy.get_time() - start) < duration.to_sec()):
             steeting_angle_pub.publish(Float64(0.55))
-        velocity_pub.publish(Float64(1))
+        velocity_pub.publish(Float64(0))
         command_sign = 0
 
     elif data.data == "GO_STRAIGH":
@@ -493,6 +485,7 @@ def command_sign_callback(data):
         velocity_pub.publish(Float64(10))
     else:
         command_sign = 0
+
 
 def main():
     global rate, velocity_pub
