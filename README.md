@@ -28,14 +28,14 @@ To run the package, follow the next steps:
 cd ~/catkin_ws
 source devel/setup.bash
 roslaunch self-driving-car world_test.launch
-rosrun self-driving-car auto_control.py
+rosrun self-driving-car control.py
 ```
 
 
 ## Training and testing traffic signs
 
-![turn](https://github.com/bombeo659/Self-driving-car/blob/main/image/iamge2.png)
+![turn](https://github.com/bombeo659/Self-driving-car/blob/main/image/lane_heading.png)
 
-![stop](https://github.com/bombeo659/Self-driving-car/blob/main/image/image1.png)
+![stop](https://github.com/bombeo659/Self-driving-car/blob/main/image/sign1.png)
 
-![graph](https://github.com/bombeo659/Self-driving-car/blob/main/image/rosgraph.png)
+![graph](https://github.com/bombeo659/Self-driving-car/blob/main/image/image.png)
