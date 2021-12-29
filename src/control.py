@@ -319,8 +319,9 @@ def compute_steering_angle(frame, lane_lines):
         _, _, left_x2, _ = lane_lines[0][0]
         _, _, right_x2, _ = lane_lines[1][0]
         # 0.0 means car pointing to center, -0.03: car is centered to left, +0.03 means car pointing to right
-        camera_mid_offset_percent = 0.02
-        mid = int(width / 2 * (1 + camera_mid_offset_percent))
+        # camera_mid_offset_percent = 0.02
+        # mid = int(width / 2 * (1 + camera_mid_offset_percent))
+        mid = int(width/2)
         x_offset = (left_x2 + right_x2) / 2 - mid
 
     # find the steering angle, which is angle between navigation direction to end of center line
