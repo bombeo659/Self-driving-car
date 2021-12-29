@@ -32,7 +32,7 @@
     </scene>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-0.861828 -12.245 51.1904 0 1.20579 0.548818</pose>
+        <pose>-24.4865 -23.8126 31.5027 0 0.557797 0.544817</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -102,10 +102,10 @@
     </spherical_coordinates>
     <wind/>
     <state world_name='default'>
-      <sim_time>2622 515000000</sim_time>
-      <real_time>148 579836738</real_time>
-      <wall_time>1640755887 796789721</wall_time>
-      <iterations>148026</iterations>
+      <sim_time>2474 489000000</sim_time>
+      <real_time>448 643621174</real_time>
+      <wall_time>1640751958 749160412</wall_time>
+      <iterations>444726</iterations>
       <model name='ground'>
         <pose>26 6.2 0 0 -0 0.55</pose>
         <scale>1 1 1</scale>
@@ -117,7 +117,7 @@
         </link>
       </model>
       <model name='leftsign'>
-        <pose>35.0232 -9.84688 0 0 -0 0.066241</pose>
+        <pose>35.0232 -9.84687 0 0 -0 0.066241</pose>
         <scale>1 1 1</scale>
         <link name='link_0'>
           <pose>35.1829 -9.83646 0 0 -0 0.066241</pose>
@@ -139,44 +139,44 @@
         </link>
       </model>
       <model name='rightsign'>
-        <pose>31.5296 22.2169 0.05992 0 -0 1.88835</pose>
+        <pose>32.1603 20.9015 0.05992 0 -0 1.94005</pose>
         <scale>1 1 1</scale>
         <link name='link_0'>
-          <pose>31.4796 22.3689 0.059918 0 -0 1.88835</pose>
+          <pose>32.1025 21.0506 0.059918 0 -0 1.94005</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='link_3'>
-          <pose>31.4984 22.3119 2.80992 0 -1.5707 1.88835</pose>
+          <pose>32.1242 20.9947 2.80992 0 -1.5707 1.94005</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='link_3_clone'>
-          <pose>31.4953 22.3215 2.80992 0 -1.5707 1.88835</pose>
+          <pose>32.1206 21.0041 2.80992 0 -1.5707 1.94005</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='stopsign'>
-        <pose>40.8549 31.0148 0 0 -0 0.55</pose>
+        <pose>39.652 30.2773 0 0 -0 0.494211</pose>
         <scale>1 1 1</scale>
         <link name='link_0'>
-          <pose>40.9911 31.0983 -0 0 -0 0.55</pose>
+          <pose>39.7927 30.3531 0 0 -0 0.494211</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='link_3'>
-          <pose>40.9401 31.067 2.75 0 -1.5707 0.55</pose>
+          <pose>39.74 30.3247 2.75 0 -1.5707 0.494211</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='link_3_clone'>
-          <pose>40.9486 31.0723 2.75 0 -1.5707 0.55</pose>
+          <pose>39.7488 30.3295 2.75 0 -1.5707 0.494211</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
