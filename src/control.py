@@ -7,39 +7,35 @@ import cv2
 import numpy as np
 import math
 import tensorflow as tf
-from threading import Thread, Lock
-import queue
+
 from PIL import Image as IM
 
 
 image_global = None
-image_global_mutex = Lock()
 rate = 0
 range_image = 0
 count = 0
-flag = 0  # 0: no info 1: stop 2: left 3: right
+sign_flag = 0  # 0: no info 1: stop 2: left 3: right
 command_sign = 0
 
 model_path = "/home/nqt/catkin_ws/src/Self-driving-car/src/Traffic.h5"
 sign_model = tf.keras.models.load_model(model_path)
-command_pub = rospy.Publisher("/command_control", String, queue_size=1)
+command_pub = rospy.Publisher("/sign_command", String, queue_size=1)
 
 
 def callback_processing_thread(proc_image):
-    global image_global, image_global_mutex, sign_model, count, flag, range_image
+    global image_global, image_global_mutex, sign_model, count, sign_flag, range_image
     image = None
-    # image_global_mutex.acquire()
+
     if image_global is not None:
         image = image_global.copy()
-        # image_global_mutex.release()
 
     if image is None:
         return
-    # ======= Process depth image =======
+
     result = 0
     draw = image.copy()
-    # cv2.imshow("daw", draw)
-    # cv2.waitKey(0)
+
     keypoints = None
     keypoints = detect_keypoints(proc_image)
 
@@ -70,7 +66,7 @@ def callback_processing_thread(proc_image):
 
             rect = ((tl_x, tl_y), (br_x, br_y))
             crop = image[tl_y:br_y, tl_x:br_x]
-            range_image = abs(tl_x - tl_y)
+            range_image, _, _ = crop.shape
 
             image_fromarray = IM.fromarray(crop, 'RGB')
             resize_image = image_fromarray.resize((30, 30))
@@ -82,7 +78,7 @@ def callback_processing_thread(proc_image):
             rects.append(rect)
             range_images.append(range_image)
 
-    if len(range_images) != 0 and max(range_images) > 165 and len(input_data_list) != 0:
+    if len(range_images) != 0 and max(range_images) > 50 and len(input_data_list) != 0:
 
         preds = sign_model.predict(input_data_list)
         preds = np.argmax(preds, axis=1)
@@ -90,42 +86,42 @@ def callback_processing_thread(proc_image):
 
         for i in range(len(preds)):
             if preds[i] == 14:
-                flag = 1
+                sign_flag = 1
                 cv2.rectangle(draw, rects[i][0], rects[i][1], (0, 0, 255), 2)
                 draw = cv2.putText(draw, "Stop Sign", rects[i][0], cv2.FONT_HERSHEY_SIMPLEX,
                                    0.5, (0, 255, 0), 1, cv2.LINE_AA)
 
             elif preds[i] == 33:
-                flag = 2
+                sign_flag = 2
                 cv2.rectangle(draw, rects[i][0], rects[i][1], (0, 0, 255), 2)
                 draw = cv2.putText(draw, "Turn Right Sign", rects[i][0], cv2.FONT_HERSHEY_SIMPLEX,
                                    0.5, (0, 255, 0), 1, cv2.LINE_AA)
 
             elif preds[i] == 34:
-                flag = 3
+                sign_flag = 3
                 cv2.rectangle(draw, rects[i][0], rects[i][1], (0, 0, 255), 2)
                 draw = cv2.putText(draw, "Turn Left Sign", rects[i][0], cv2.FONT_HERSHEY_SIMPLEX,
                                    0.5, (0, 255, 0), 1, cv2.LINE_AA)
 
             elif preds[i] == 35:
-                flag = 4
+                sign_flag = 4
                 cv2.rectangle(draw, rects[i][0], rects[i][1], (0, 0, 255), 2)
                 draw = cv2.putText(draw, "Go Straight Sign", rects[i][0], cv2.FONT_HERSHEY_SIMPLEX,
                                    0.5, (0, 255, 0), 1, cv2.LINE_AA)
             else:
                 pass
 
-    if flag == 1:
+    if sign_flag == 1:
         command_pub.publish("STOP")
-    elif flag == 2:
+    elif sign_flag == 2:
         command_pub.publish("TURN_RIGHT")
-    elif flag == 3:
+    elif sign_flag == 3:
         command_pub.publish("TURN_LEFT")
-    elif flag == 4:
+    elif sign_flag == 4:
         command_pub.publish("GO_STRAIGHT")
     else:
         pass
-    flag = 0
+    sign_flag = 0
     input_data_list.clear()
     rects.clear()
     range_images.clear()
@@ -219,8 +215,6 @@ def detect_edges(frame):
     # Detecting white colors
     mask_white = cv2.inRange(img_gray, 200, 255)
 
-    # mask = cv2.bitwise_and(img_gray, mask_white)
-
     # detect edges
     edges = cv2.Canny(mask_white, 200, 400)
 
@@ -237,8 +231,8 @@ def region_of_interest(canny):
     mask_roi = np.zeros_like(gray_blur)
     left_bottom = [0, ysize]
     right_bottom = [xsize, ysize]
-    apex_left = [(0), (3*ysize/4)]
-    apex_right = [(xsize), (3*ysize/4)]
+    apex_left = [(0), (ysize*3/4)]
+    apex_right = [(xsize), (ysize*3/4)]
     mask_color = 255
     roi_corners = np.array(
         [[left_bottom, apex_left, apex_right, right_bottom]], dtype=np.int32)
@@ -318,19 +312,16 @@ def compute_steering_angle(frame, lane_lines):
     else:
         _, _, left_x2, _ = lane_lines[0][0]
         _, _, right_x2, _ = lane_lines[1][0]
-        # 0.0 means car pointing to center, -0.03: car is centered to left, +0.03 means car pointing to right
-        # camera_mid_offset_percent = 0.02
-        # mid = int(width / 2 * (1 + camera_mid_offset_percent))
         mid = int(width/2)
         x_offset = (left_x2 + right_x2) / 2 - mid
 
     # find the steering angle, which is angle between navigation direction to end of center line
-    y_offset = int(3*height / 4)
+    y_offset = int(height*3/4)
 
     # angle (in radian) to center vertical line
     angle_to_mid_radian = math.atan(x_offset / y_offset)
     # angle (in degrees) to center vertical line
-    angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi*0.6)
+    angle_to_mid_deg = int(angle_to_mid_radian*180.0/math.pi)
     # this is the steering angle needed by picar front wheel
     steering_angle = angle_to_mid_deg + 90
 
@@ -355,8 +346,8 @@ def display_heading_line(frame, steering_angle, line_color=(0, 0, 255), line_wid
     steering_angle_radian = steering_angle / 180.0 * math.pi
     x1 = int(width / 2)
     y1 = height
-    x2 = int(x1 - 2*height/3/math.tan(steering_angle_radian))
-    y2 = int(3*height/4)
+    x2 = int(x1 - (height*3/4)/math.tan(steering_angle_radian))
+    y2 = int(height*3/4)
 
     cv2.line(heading_image, (x1, y1), (x2, y2),
              line_color, line_width, line_hight)
@@ -380,7 +371,7 @@ def make_points(frame, line):
     height, width, _ = frame.shape
     slope, intercept = line
     y1 = height  # bottom of the frame
-    y2 = int(y1 * 3 / 4)  # make points from middle of the frame down
+    y2 = int(y1*3/4)  # make points from middle of the frame down
 
     # bound the coordinates within the frame
     x1 = max(-width, min(2 * width, int((y1 - intercept) / slope)))
@@ -423,7 +414,7 @@ def lane_callback(data):
 
         if(len(steeting_angle) == 10):
             data = np.average(steeting_angle, axis=None)
-            angle_rad = round(((90 - data)/180 * math.pi * 1.2), 3)
+            angle_rad = round(((90 - data)/180 * math.pi), 3)
             if(land_follower.line == 1):
                 angle_rad = round(angle_rad + 0.5*angle_rad, 3)
             steeting_angle.clear()
@@ -452,7 +443,7 @@ def sign_callback(data):
         print(e)
 
 
-def command_sign_callback(data):
+def sign_command_callback(data):
     global command_sign, velocity_pub, steeting_angle_pub
 
     print(data.data)
@@ -497,7 +488,7 @@ def main():
         "/image_raw", Image, lane_callback, queue_size=1)
     sign_sub = rospy.Subscriber(
         "/image_raw", Image, sign_callback, queue_size=1)
-    rospy.Subscriber("/command_control", String, command_sign_callback)
+    rospy.Subscriber("/sign_command", String, sign_command_callback)
     rospy.spin()
 
 
